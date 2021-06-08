@@ -1,0 +1,515 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <h:head>
+        <title>Users</title>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous"></link>
+        <style>
+        .navbar-nav {
+            margin-left: auto;
+        }
+    </style>
+    </h:head>
+    <h:body>
+        <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+          <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarTogglerDemo01">
+              <a class="navbar-brand text-light" href="#">Trabalho de SD</a>
+              <ul class="navbar-nav mb-2 mb-lg-0 ">
+                <c:set var="session" value="#{UtilizadoresController.userSession.id}"/>
+                <c:if test="${session == 0}">
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+                        Login
+                    </button>
+                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+                        Register
+                    </button>
+                </c:if>
+                <c:set var="categoria" value="#{UtilizadoresController.userSession.categoria}"/>
+                <c:if test="#{categoria == 1}">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalfun">
+                            Utilizadores
+                        </button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Mensagens
+                        </button>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#adicionar">
+                            Adicionar Produto
+                        </button>
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#historico">
+                            historico
+                          </button>
+                </c:if>
+                <c:if test="#{session >= 1}">
+                    <h:form>
+                        <h:commandButton value="Logout" class="btn btn-primary" action="#{UtilizadoresController.logout()}"/>
+                    </h:form>
+                </c:if>
+                
+              </ul>
+            </div>
+          </div>
+        </nav>
+
+        
+        <div class="container-md bg-light mt-3 m-auto">
+           <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item col" role="presentation">
+              <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Bebidas</button>
+            </li>
+            <li class="nav-item col" role="presentation">
+              <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Limpeza</button>
+            </li>
+            <li class="nav-item col" role="presentation">
+              <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-contact" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Carnes</button>
+            </li>
+            <li class="nav-item col" role="presentation">
+              <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-mercearia" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Mercearia</button>
+            </li>
+            <li class="nav-item col" role="presentation">
+              <button class="nav-link" id="pills-contact-tab" data-bs-toggle="pill" data-bs-target="#pills-peixes" type="button" role="tab" aria-controls="pills-contact" aria-selected="false">Peixes</button>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+                   <table  class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Validade</th>
+                            <th scope="col">Preço de Venda</th>
+                            <th scope="col">Stock</th>
+                            <c:if test="#{session >= 1}">
+                             <th scope="col">Quantidade </th>
+                             <th scope="col"></th>
+                            </c:if>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item2" items="#{ProdutosController.readBebida}">
+                            <tr>
+                                <td>#{item2.nome}</td>
+                                <td>#{item2.descricao}</td>
+                                <td>#{item2.validade.date}/#{item2.validade.month}/#{item2.validade.year+1900}</td>
+                                <td>#{item2.precoFinal}</td>
+                                <td>#{item2.stock}</td>
+                               
+                                <c:if test="#{session >= 1}">
+                                    <h:form>
+                                        <td><h:inputText value="#{ProdutosController.quantidade}" /></td>
+                                        <td><h:commandButton value="Comprar" class="btn btn-primary" action="#{ProdutosController.comprarProduto(item2.idProduto)}"/></td>
+                                    </h:form>
+                                </c:if>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+                <table  class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Validade</th>
+                            <th scope="col">Preço de Venda</th>
+                            <th scope="col">Stock</th>
+                            <c:if test="#{session >= 1}">
+                             <th scope="col">Quantidade </th>
+                             <th scope="col"></th>
+                            </c:if>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item2" items="#{ProdutosController.readLimpeza}">
+                            <tr> 
+                                    <td>#{item2.nome}</td>
+                                    <td>#{item2.descricao}</td>
+                                    <td>#{item2.validade.date}/#{item2.validade.month}/#{item2.validade.year+1900}</td>
+                                    <td>#{item2.precoFinal}</td>
+                                    <td>#{item2.stock}</td>
+                                    
+                                    <c:if test="#{session >= 1}">
+                                        <h:form>
+                                            <td><h:inputText value="#{ProdutosController.quantidade}" /></td>
+                                            <td><h:commandButton value="Comprar" class="btn btn-primary" action="#{ProdutosController.comprarProduto(item2.idProduto)}"/></td>
+                                        </h:form>
+                                    </c:if>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="pills-mercearia" role="tabpanel" aria-labelledby="pills-contact-tab">
+                <table  class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Validade</th>
+                            <th scope="col">Preço de Venda</th>
+                            <th scope="col">Stock</th>
+                            <c:if test="#{session >= 1}">
+                             <th scope="col">Quantidade </th>
+                             <th scope="col"></th>
+                            </c:if>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item2" items="#{ProdutosController.readMercearia}">
+                            <tr> 
+                                    <td>#{item2.nome}</td>
+                                    <td>#{item2.descricao}</td>
+                                    <td>#{item2.validade.date}/#{item2.validade.month}/#{item2.validade.year+1900}</td>
+                                    <td>#{item2.precoFinal}</td>
+                                    <td>#{item2.stock}</td>
+                                    <c:if test="#{session >= 1}">
+                                        <h:form>
+                                            <td><h:inputText value="#{ProdutosController.quantidade}" /></td>
+                                            <td><h:commandButton value="Comprar" class="btn btn-primary" action="#{ProdutosController.comprarProduto(item2.idProduto)}"/></td>
+                                        </h:form>
+                                    </c:if>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+              </div>
+              <div class="tab-pane fade" id="pills-contact" role="tabpanel" aria-labelledby="pills-contact-tab">
+                 <table  class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Validade</th>
+                            <th scope="col">Preço de Venda</th>
+                            <th scope="col">Stock</th>
+                            <c:if test="#{session >= 1}">
+                             <th scope="col">Quantidade </th>
+                             <th scope="col"></th>
+                            </c:if>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item2" items="#{ProdutosController.readCarnes}">
+                            <tr> 
+                                    <td>#{item2.nome}</td>
+                                    <td>#{item2.descricao}</td>
+                                    <td>#{item2.validade.date}/#{item2.validade.month}/#{item2.validade.year+1900}</td>
+                                    <td>#{item2.precoFinal}</td>
+                                    <td>#{item2.stock}</td>
+                                    <c:if test="#{session >= 1}">
+                                        <h:form>
+                                            <td><h:inputText value="#{ProdutosController.quantidade}" /></td>
+                                            <td><h:commandButton value="Comprar" class="btn btn-primary" action="#{ProdutosController.comprarProduto(item2.idProduto)}"/></td>
+                                        </h:form>
+                                    </c:if>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+              </div>
+              
+              <div class="tab-pane fade" id="pills-peixes" role="tabpanel" aria-labelledby="pills-contact-tab">
+                  <table  class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Nome</th>
+                            <th scope="col">Descrição</th>
+                            <th scope="col">Validade</th>
+                            <th scope="col">Preço de Venda</th>
+                            <th scope="col">Stock</th>
+                            <c:if test="#{session >= 1}">
+                             <th scope="col">Quantidade </th>
+                             <th scope="col"></th>
+                            </c:if>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item2" items="#{ProdutosController.readPeixes}">
+                            <tr> 
+                                    <td>#{item2.nome}</td>
+                                    <td>#{item2.descricao}</td>
+                                    <td>#{item2.validade.date}/#{item2.validade.month}/#{item2.validade.year+1900}</td>
+                                    <td>#{item2.precoFinal}</td>
+                                    <td>#{item2.stock}</td>
+                                    <c:if test="#{session >= 1}">
+                                        <h:form>
+                                            <td><h:inputText value="#{ProdutosController.quantidade}" /></td>
+                                            <td><h:commandButton value="Comprar" class="btn btn-primary" action="#{ProdutosController.comprarProduto(item2.idProduto)}"/></td>
+                                        </h:form>
+                                    </c:if>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+              </div>
+          </div>
+        </div>
+        
+        
+        
+        
+        
+        
+      
+
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Mensagens</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                          <table class="table">
+                            <thead>
+                              <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Mensagem</th>
+                                <th scope="col">Data</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <c:forEach var="item2" items="#{ProdutosController.getReadNotificacoes()}">
+                                <tr>
+                                    <th scope="row">#{item2.idNotificacoes}</th>
+                                    <td>#{item2.msg}</td>
+                                    <td>#{item2.date}</td>
+                                </tr>
+                              </c:forEach>
+                            </tbody>
+                          </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+        
+        
+        
+        <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Login - Page</h5>
+              </div>
+              <h:form>
+                <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <h:inputText id="email" value="#{UtilizadoresController.email}" class="form-control"/> 
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="inputPassword5" class="form-label">Password</label>
+                        <h:inputSecret id="inputPassword5" class="form-control"  value="#{UtilizadoresController.password}"/> 
+                      </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <h:commandButton value="Login" class="btn btn-success" action="#{UtilizadoresController.login()}"/> 
+                </div>
+              </h:form>
+            </div>
+          </div>
+        </div>
+        
+        
+        
+        
+        
+        
+        <div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Register Page</h5>
+              </div>
+              <h:form>
+                <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <h:inputText id="name" value="#{UtilizadoresController.nome}" class="form-control"/> 
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <h:inputText id="email" value="#{UtilizadoresController.email}" class="form-control"/> 
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="inputPassword5" class="form-label">Password</label>
+                        <h:inputSecret id="inputPassword5" class="form-control"  value="#{UtilizadoresController.password}"/> 
+                      </div>
+
+                       <div class="mb-3">
+                        <label for="input2Password5" class="form-label">Confirm Password</label>
+                        <h:inputSecret id="input2Password5" class="form-control" value="#{UtilizadoresController.confirmpassword}"/> 
+                      </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <h:commandButton value="Register" class="btn btn-success" action="#{UtilizadoresController.addUser()}"/> 
+                </div>
+              </h:form>
+            </div>
+          </div>
+        </div>
+        
+        
+        
+        
+        
+        
+        
+        
+
+        <div class="modal fade" id="exampleModalfun" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Lista de Utilizadores</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <h:form>
+                    <table  class="table">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Nome</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Admin</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <c:forEach var="item2" items="#{UtilizadoresController.userList}">
+                                <tr> 
+                                    <td>#{item2.nome}</td>
+                                    <td>#{item2.email}</td>
+                                    <c:set var="idtipo" value="#{item2.idTipo}"/>
+                                    <c:if test="${idtipo == 2}">
+                                        <td>Cliente</td>    
+                                        <h:form>
+                                           <td><h:commandButton value="Admin" class="btn btn-primary" action="#{UtilizadoresController.modificarCategoriaUtilizador(item2.idUtilizador, 1)}"/></td>
+                                        </h:form>
+                                    </c:if> 
+                                    <c:if test="${idtipo == 1}">
+                                        <td>Administrador</td>
+                                    </c:if> 
+                                </tr>
+                            </c:forEach>
+                        </tbody>
+                    </table>
+                </h:form>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        
+          <!-- Modal -->
+          <div class="modal fade" id="adicionar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Adicionar Produtos</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <h:form>
+
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <h:inputText  class="form-control" value="#{ProdutosController.produtos.nome}"/>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Descrição</label>
+                        <h:inputText  class="form-control" value="#{ProdutosController.produtos.descricao}"/>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Preço de Compra</label>
+                        <h:inputText  class="form-control" value="#{ProdutosController.produtos.precoCompra}"/>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Preço de Venda</label>
+                        <h:inputText  class="form-control" value="#{ProdutosController.produtos.precoFinal}"/>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Stock</label>
+                        <h:inputText  class="form-control" value="#{ProdutosController.produtos.stock}"/>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Stock Minimo</label>                 
+                         <h:inputText  class="form-control" value="#{ProdutosController.produtos.stockMin}"/>
+                      </div>
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Categoria do Produto</label>                            
+                        <h:inputText  class="form-control" value="#{ProdutosController.produtos.idCategoria}"/>
+                      </div>
+
+                    </div>
+                <div class="modal-footer">                        
+                    <h:commandButton class="btn btn-primary" value="Adicionar"  action="#{ProdutosController.create()}"/>
+                </div>
+                </h:form>
+
+              </div>
+            </div>
+          </div>
+          
+          
+          
+          
+          
+          
+          
+
+        <!-- Modal -->
+        <div class="modal fade " id="historico" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">historico</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <table  class="table">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">ID do Produto</th>
+                            <th scope="col">Data</th>
+                            <th scope="col">Quantidade</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <c:forEach var="item2" items="#{ProdutosController.getHistoricoList()}">
+                            <tr>
+                                <td>#{item2.idProduto}</td>
+                                <td>#{item2.data.date}/#{item2.data.month}/#{item2.data.year + 1900}</td>
+                                <td>#{item2.total}</td>
+                            </tr>
+                        </c:forEach>
+                    </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+    </h:body>
+</html>
+
+
+
